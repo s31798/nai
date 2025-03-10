@@ -1,14 +1,4 @@
-line1 = [5.1,3.5,1.4,0.2,"Iris-setosa"]
-line2 = [4.9,3.0,1.4,0.2,"Iris-setosa"]
-line3 = [4.7,3.2,1.3,0.2,"Iris-setosa"]
-line4 = [4.6,3.1,1.5,0.2,"Iris-setosa"]
-line5 = [5.0,3.6,1.4,0.2,"Iris-setosa"]
-lines = [line1,line2,line3,line4,line5]
-x_train = []
-y_train = []
-for line in lines:
-    x_train.append(line[:-1])
-    y_train.append(line[-1])
+
 
 x_test = [5.0,3.2,1.2,0.2]
 
@@ -16,6 +6,10 @@ x_test = [5.0,3.2,1.2,0.2]
 
 class Model:
     def __init__(self,k):
+        self.x_train = None
+        self.y_train = None
+        self.x_test = None
+        self.y_test = None
         self.k = k
     @staticmethod
     def calculate_distance(vector1, vector2):
@@ -28,10 +22,32 @@ class Model:
         distances = []
         for i in range(len(training_vectors)):
             distances.append(Model.calculate_distance(training_vectors[i], test_vector))
-            print(distances[i])
         return distances
+    @staticmethod
+    def load_data_from_file(file_name):
+        x = []
+        y  = []
+        file = open("data/" + file_name)
+        line = file.readline()
+        while line:
+            vec = []
+            line = line.strip().split(",")
+            for i in range(len(line) - 1):
+                vec.append(float(line[i]))
+            x.append(vec)
+            y.append(line[-1])
+            line = file.readline()
+        return x, y
 
-print(x_train)
-print(x_test)
-Model.calculate_distances(x_train, x_test)
+    def open_training_data(self, file_name):
+        self.x_train,self.y_train = Model.load_data_from_file(file_name)
+
+    def open_test_data(self, file_name):
+        self.x_test, self.y_test = Model.load_data_from_file(file_name)
+
+
+m = Model(5)
+m.open_training_data("iris.data")
+m.open_test_data("iris.test.data")
+print(Model.calculate_distances(m.x_train, x_test))
 
